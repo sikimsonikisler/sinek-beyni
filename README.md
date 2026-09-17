@@ -2,7 +2,7 @@
 
 Meyve sineğinin gerçek beyin devresiyle çalışan bir tarayıcı oyunu. Sineği sen yürütüyorsun; yiyip yememesine FlyWire kablo şemasından çıkarılmış 1.538 nöronluk bir devre karar veriyor. Devre, sayfa açıkken tarayıcında canlı simüle ediliyor.
 
-**Oyna:** `index.html` dosyasını tarayıcıda aç ya da aşağıdaki adımlarla GitHub Pages'te yayınla.
+**Oyna:** https://sikimsonikisler.github.io/sinek-beyni/
 
 ## Nasıl oynanır
 
