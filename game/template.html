@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sinek beyni: tatlı avı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EDF1EF; --paper-2: #E1E8E4; --ink: #1C292D; --muted: #56676B; --line: #C4CFCB;
+  --eye: #C0182B; --honey: #CC8710; --bitter: #5B7620; --water: #2B7BA0; --focus: #1D5FD1;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #172024; --paper-2: #1E292E; --ink: #E3EBE7; --muted: #92A3A6; --line: #2E3C41;
+    --eye: #FF5A67; --honey: #F0B03A; --bitter: #A5C155; --water: #6CB9DB; --focus: #8AB4FF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #172024; --paper-2: #1E292E; --ink: #E3EBE7; --muted: #92A3A6; --line: #2E3C41;
+  --eye: #FF5A67; --honey: #F0B03A; --bitter: #A5C155; --water: #6CB9DB; --focus: #8AB4FF;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px; line-height: 1.45;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 22px 20px 36px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px 28px; margin-bottom: 18px; }
+h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; margin: 0; font-variation-settings: "opsz" 96; }
+.lede { margin: 8px 0 0; color: var(--muted); max-width: 58ch; }
+.modes { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+.modes button { border: 0; background: transparent; color: var(--ink); padding: 8px 16px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; }
+.modes button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.layout { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr); gap: 30px; align-items: start; }
+@media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.dish-wrap { position: relative; width: 100%; max-width: 640px; aspect-ratio: 1 / 1; margin: 0 auto; }
+#dish { width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; }
+.overlay {
+  position: absolute; inset: 13%; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 10px; padding: 6% 9%; background: rgba(28, 41, 45, 0.86); color: #F4F1E6;
+}
+.overlay[hidden] { display: none; }
+.overlay h2 { margin: 0; font-size: clamp(22px, 3.2vw, 32px); line-height: 1.05; letter-spacing: -0.02em; }
+.overlay p { margin: 0; max-width: 34ch; font-size: clamp(13px, 1.6vw, 16px); }
+.overlay .keys { color: #BFC9C6; font-size: 13px; }
+.primary { background: var(--eye); color: #fff; border: 0; padding: 12px 22px; border-radius: 999px; font: inherit; font-weight: 700; font-size: 17px; cursor: pointer; }
+.primary:hover { filter: brightness(1.08); }
+.hud { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px 18px; align-items: end; max-width: 640px; margin: 14px auto 0; font-size: 14px; }
+.hud[hidden] { display: none; }
+.meter { display: grid; gap: 4px; }
+.bar { height: 9px; border-radius: 5px; background: var(--paper-2); border: 1px solid var(--line); overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--honey); }
+.toxin .fill { background: var(--bitter); }
+.stats { display: flex; gap: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hearts { color: var(--eye); letter-spacing: 2px; }
+.foods { display: flex; flex-wrap: wrap; gap: 6px 16px; max-width: 640px; margin: 12px auto 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
+.foods li { display: flex; align-items: center; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.15); }
+.brain section + section { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 14px; }
+.brain h2 { font-size: 19px; margin: 0 0 8px; letter-spacing: -0.01em; }
+.readout { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.hz { font-size: 46px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; min-width: 2.2ch; letter-spacing: -0.02em; }
+.unit { color: var(--muted); font-weight: 600; }
+.state { font-weight: 700; margin-left: 6px; }
+.note { color: var(--muted); font-size: 14px; margin: 4px 0 10px; }
+#trace { width: 100%; height: 70px; display: block; }
+#raster { width: 100%; height: 300px; display: block; margin-top: 8px; }
+.switch { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
+.switch input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--eye); flex: none; }
+.switch span { font-weight: 600; }
+.switch small { display: block; font-weight: 400; color: var(--muted); font-size: 14px; }
+.sliders { display: grid; gap: 8px; }
+.sliders label { display: grid; grid-template-columns: 52px 1fr 64px; gap: 10px; align-items: center; font-weight: 600; }
+.sliders output { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+.sliders input { width: 100%; accent-color: var(--ink); }
+.missions ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.missions li { display: grid; grid-template-columns: 22px 1fr; align-items: start; }
+.box { width: 16px; height: 16px; border: 1.5px solid var(--muted); border-radius: 4px; margin-top: 3px; position: relative; }
+.missions li.done { color: var(--muted); }
+.missions li.done .box { background: var(--eye); border-color: var(--eye); }
+.missions li.done .box::after { content: ""; position: absolute; left: 4px; top: 0px; width: 4px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+details summary { cursor: pointer; font-weight: 700; }
+details p { max-width: 62ch; }
+.ref { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ref td { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.ref td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
+footer { color: var(--muted); font-size: 13px; margin-top: 28px; max-width: 90ch; }
+.toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); max-width: min(560px, 92vw);
+  background: var(--ink); color: var(--paper); padding: 12px 16px; border-radius: 12px; font-size: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.toast.show { opacity: 1; }
+.toast b { display: block; margin-bottom: 2px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Sinek beyni</h1>
+      <p class="lede">Sineği sen yürütüyorsun. Yiyip yememesine onun gerçek beyin devresi karar veriyor: 1.538 nöron, tarayıcında canlı çalışıyor.</p>
+    </div>
+    <div class="modes" role="group" aria-label="Mod seçimi">
+      <button id="modeGame" aria-pressed="true">Tatlı avı</button>
+      <button id="modeLab" aria-pressed="false">Laboratuvar</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section aria-label="Oyun alanı">
+      <div class="dish-wrap">
+        <canvas id="dish" aria-label="Agar kabındaki meyve sineği"></canvas>
+        <div class="overlay" id="overlay">
+          <h2 id="ovTitle">Sinek acıktı</h2>
+          <p id="ovText">Sineği yiyeceklere götür. Tat nöronları ateşler; hortumu uzatan MN9 nöronu yeterince hızlanırsa sinek yer. Raketin gölgesini görünce kaç.</p>
+          <button class="primary" id="startBtn">Oyuna başla</button>
+          <p class="keys">Yön tuşları, WASD ya da dokunup sürükle</p>
+        </div>
+      </div>
+      <div class="hud" id="hud">
+        <div class="meter"><span>Enerji</span><div class="bar"><div class="fill" id="energyFill"></div></div></div>
+        <div class="meter toxin"><span>Zehir</span><div class="bar"><div class="fill" id="toxinFill"></div></div></div>
+        <div class="stats"><span class="hearts" id="hearts" aria-label="Kalan can">●●●</span><span id="clock">0:00</span><span id="eaten">0 yiyecek</span></div>
+      </div>
+      <ul class="foods" id="foodLegend">
+        <li><span class="dot" style="background:#FBFAF2"></span>Şeker: tatlı</li>
+        <li><span class="dot" style="background:#E9A21F"></span>Bal: çok tatlı</li>
+        <li><span class="dot" style="background:#E7B868"></span>Acılı tatlı: tatlı, biraz acı</li>
+        <li><span class="dot" style="background:#D5DBA2"></span>Kinin damlası: tatlı, çok acı</li>
+        <li><span class="dot" style="background:#4E6B1F"></span>Acı ot: sadece acı</li>
+      </ul>
+    </section>
+
+    <aside class="brain" aria-label="Beyin paneli">
+      <section>
+        <div class="readout">
+          <span class="hz" id="mn9Hz">0</span><span class="unit">Hz</span><span class="state" id="mn9State">Tat yok</span>
+        </div>
+        <p class="note">MN9, hortumu uzatan motor nöron. 45 Hz'yi geçince sinek yemeye başlar.</p>
+        <canvas id="trace" aria-label="Son 5 saniyede MN9 hızı"></canvas>
+        <canvas id="raster" aria-label="Son 1 saniyenin canlı spike kaydı"></canvas>
+        <p class="note" id="speed">Beyin başlatılıyor…</p>
+      </section>
+
+      <section id="labPanel" hidden>
+        <h2>Tat pipeti</h2>
+        <p class="note">Tat nöronlarını doğrudan uyar, MN9'un nasıl değiştiğini izle.</p>
+        <div class="sliders">
+          <label>Tatlı <input type="range" id="sSugar" min="0" max="200" step="10" value="160"><output id="oSugar">160 Hz</output></label>
+          <label>Acı <input type="range" id="sBitter" min="0" max="200" step="10" value="0"><output id="oBitter">0 Hz</output></label>
+          <label>Su <input type="range" id="sWater" min="0" max="200" step="10" value="0"><output id="oWater">0 Hz</output></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Beyin cerrahı</h2>
+        <label class="switch"><input type="checkbox" id="lesRoundup"><span>Roundup nöronlarını sustur<small>MN9'u süren 2 premotor nöron</small></span></label>
+        <label class="switch"><input type="checkbox" id="lesBrake"><span>Acı frenini sustur<small>Acıyla ateşleyip beslenme yolunu baskılayan 11 nöron</small></span></label>
+      </section>
+
+      <section class="missions" id="missionPanel">
+        <h2>Görevler</h2>
+        <ul id="missions"></ul>
+      </section>
+
+      <section>
+        <details>
+          <summary>Bu oyunda ne gerçek?</summary>
+          <p><b>Gerçek:</b> Beyin, FlyWire kablo şemasından (v630) çıkarılmış 1.538 nöron ve 106.756 bağlantılık bir devre. Nöronlar Shiu et al. (2024) modelinin kurallarıyla tarayıcında adım adım simüle ediliyor. Tat nöronları, MN9, Roundup ve acı freni gerçek nöronlar; susturma düğmeleri bu nöronların çıkışlarını gerçekten kapatıyor.</p>
+          <p><b>Oyun kuralı:</b> Sineği sen yürütüyorsun, yürüme ve kaçma devreleri simüle edilmiyor. Yiyecekler tat nöronlarını sabit hızlarda uyarıyor. MN9 45 Hz'yi geçince hortumun uzaması, enerji, zehir ve raket oyun tasarımı.</p>
+          <p><b>Doğrulama:</b> Bu alt devre aynı rastgelelik tohumuyla tam beyinle birebir aynı MN9 sonucunu verdi. Tarayıcı sürümü aynı koşullarda Python sürümüyle en fazla 5,5 Hz farkla uyuştu. Referans değerler (Python, 6 deneme):</p>
+          <table class="ref" id="refTable"></table>
+        </details>
+      </section>
+    </aside>
+  </main>
+  <footer>Kablo şeması: FlyWire v630. Nöron modeli ve tat nöronu kimlikleri: Shiu et al. (2024), Nature, github.com/philshiu/Drosophila_brain_model (MIT). Sinek, yiyecekler ve raket bu sayfa için çizildi.</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>/*__BRAIN_DATA__*/</script>
+<script>/*__BRAIN_CORE__*/</script>
+<script>
+(() => {
+  "use strict";
+  const D = window.BRAIN_DATA;
+  const brain = new FlyBrain(D);
+  const $ = (id) => document.getElementById(id);
+  const TAU = Math.PI * 2;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EAT_HZ = 45, SWAT_R = 0.17;
+
+  // ---------------- beyin paneli satırları ----------------
+  const GROUPS = [
+    { key: "sugar", label: "Tatlı GRN", color: "--honey" },
+    { key: "bitter", label: "Acı GRN", color: "--bitter" },
+    { key: "water", label: "Su GRN", color: "--water" },
+    { key: "early", label: "Erken ara", color: "--muted" },
+    { key: "late", label: "Geç ara", color: "--muted" },
+    { key: "brake", label: "Acı freni", color: "--bitter" },
+    { key: "roundup", label: "Roundup", color: "--ink" },
+    { key: "premotor", label: "Premotor", color: "--ink" },
+    { key: "mn9", label: "MN9", color: "--eye" },
+  ];
+  const rowGroup = [];
+  GROUPS.forEach((gr, gi) => {
+    gr.start = rowGroup.length;
+    for (const ni of D.groups[gr.key] || []) { brain.watch[ni] = rowGroup.length; rowGroup.push(gi); }
+    gr.end = rowGroup.length;
+  });
+  const CAP = 40000, spStep = new Int32Array(CAP), spRow = new Int16Array(CAP);
+  let spHead = 0, spCount = 0;
+  brain.onSpike = (row, t) => {
+    spStep[spHead] = t; spRow[spHead] = row; spHead = (spHead + 1) % CAP;
+    if (spCount < CAP) spCount++;
+  };
+  const TRACE_N = 100, trace = new Float32Array(TRACE_N);
+  let traceHead = 0, traceAcc = 0;
+
+  // ---------------- renkler ----------------
+  let COL = {};
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    for (const k of ["--paper", "--paper-2", "--ink", "--muted", "--line", "--eye", "--honey", "--bitter", "--water"]) {
+      COL[k] = (cs.getPropertyValue(k) || "").trim() || "#777";
+    }
+  }
+  readColors();
+  if (window.matchMedia) {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", readColors);
+  }
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  const FONT = '"Bricolage Grotesque", system-ui, sans-serif';
+
+  // ---------------- oyun verisi ----------------
+  const FOODS = {
+    seker: { name: "Şeker", sugar: 160, bitter: 0, energy: 30, toxin: 0, r: 0.055, weight: 34 },
+    bal: { name: "Bal", sugar: 200, bitter: 0, energy: 42, toxin: 0, r: 0.06, weight: 12 },
+    aciTatli: { name: "Acılı tatlı", sugar: 160, bitter: 60, energy: 26, toxin: 24, r: 0.055, weight: 20 },
+    kinin: { name: "Kinin damlası", sugar: 160, bitter: 100, energy: 26, toxin: 60, r: 0.055, weight: 18 },
+    aciOt: { name: "Acı ot", sugar: 0, bitter: 200, energy: 0, toxin: 70, r: 0.065, weight: 16 },
+  };
+  const MISSIONS = [
+    { id: "sweet", text: "Sineğe bir şeker ya da bal yedir.",
+      msg: "Tatlı tat nöronları ateşledi, sinyal ara nöronlardan geçip MN9'u 45 Hz'nin üstüne çıkardı. Hortum uzandı." },
+    { id: "reject", text: "Sineği acı otun üstünde 2 saniye tut.",
+      msg: "Sadece acı nöronları ateşliyor. Tatlı yol hiç uyarılmadığı için MN9 sessiz, sinek yemiyor." },
+    { id: "roundup", text: "Roundup'ı sustur, sonra sineği bala götür.",
+      msg: "Bal tatlı nöronları yine ateşletiyor ama MN9'u süren iki premotor nöron sessiz. MN9 eşiğin altında kalıyor, hortum uzanmıyor." },
+    { id: "brake", text: "Acı frenini sustur ve kinin damlası yedir.",
+      msg: "Acıyı frene çeviren 11 baskılayıcı nöron sustu, sinek acılı yiyeceği artık reddetmiyor. Zehir barına dikkat." },
+    { id: "survive", text: "Bir oyunda 60 saniye hayatta kal.",
+      msg: "Enerji, zehir ve raket dengesini kurdun." },
+  ];
+  const done = loadJSON("sinekBeyni.missions", {});
+  let best = loadJSON("sinekBeyni.best", 0);
+  function loadJSON(k, fallback) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+  function saveJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* depolama yoksa sorun değil */ } }
+
+  const S = {
+    mode: "game", playing: false,
+    fly: newFly(), target: null, keys: new Set(),
+    foods: [], particles: [],
+    energy: 80, toxin: 0, hearts: 3, time: 0, eaten: 0, sweetEaten: 0,
+    spawnTimer: 0, swat: null, swatTimer: 10, shake: 0, invuln: 0,
+    contact: null, contactTime: 0, speed: 1,
+  };
+  window.__sinek = { S, brain };
+  function newFly() { return { x: 0, y: 0.12, a: -Math.PI / 2, vx: 0, vy: 0, walk: 0, ext: 0, sp: 0 }; }
+
+  // ---------------- tuval boyutları ----------------
+  const cv = $("dish"), ctx = cv.getContext("2d");
+  const rcv = $("raster"), rctx = rcv.getContext("2d");
+  const tcv = $("trace"), tctx = tcv.getContext("2d");
+  let W = 1, H = 1, DPR = 1, CX = 0, CY = 0, SCALE = 1, tex = null;
+  function fit(c) {
+    const r = c.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width * DPR)), h = Math.max(1, Math.round(r.height * DPR));
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; return true; }
+    return false;
+  }
+  function resize() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const changed = fit(cv);
+    fit(rcv); fit(tcv);
+    W = cv.width; H = cv.height; CX = W / 2; CY = H / 2; SCALE = Math.min(W, H) / 2 * 0.97;
+    if (changed || !tex) buildTexture();
+  }
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(document.body); else window.addEventListener("resize", resize);
+
+  function buildTexture() {
+    tex = document.createElement("canvas"); tex.width = W; tex.height = H;
+    const t = tex.getContext("2d"), R = SCALE;
+    t.save();
+    t.beginPath(); t.arc(CX, CY, R, 0, TAU);
+    const gr = t.createRadialGradient(CX - R * 0.25, CY - R * 0.3, R * 0.05, CX, CY, R);
+    gr.addColorStop(0, "#F7DE9E"); gr.addColorStop(0.62, "#E9BF68"); gr.addColorStop(1, "#C28E3C");
+    t.fillStyle = gr; t.fill(); t.clip();
+    const n = Math.round(R * R * 0.004);
+    for (let i = 0; i < n; i++) {
+      const ang = Math.random() * TAU, rr = Math.sqrt(Math.random()) * R;
+      t.fillStyle = "rgba(110,70,15," + (0.03 + Math.random() * 0.07).toFixed(3) + ")";
+      t.fillRect(CX + Math.cos(ang) * rr, CY + Math.sin(ang) * rr, 1.3 * DPR, 1.3 * DPR);
+    }
+    const hl = t.createRadialGradient(CX - R * 0.38, CY - R * 0.42, 0, CX - R * 0.38, CY - R * 0.42, R * 0.75);
+    hl.addColorStop(0, "rgba(255,255,238,0.5)"); hl.addColorStop(1, "rgba(255,255,238,0)");
+    t.fillStyle = hl; t.fillRect(0, 0, W, H);
+    const eg = t.createRadialGradient(CX, CY, R * 0.8, CX, CY, R);
+    eg.addColorStop(0, "rgba(80,48,8,0)"); eg.addColorStop(1, "rgba(80,48,8,0.3)");
+    t.fillStyle = eg; t.fillRect(0, 0, W, H);
+    t.restore();
+    t.beginPath(); t.arc(CX, CY, R - 2 * DPR, 0, TAU); t.lineWidth = 3 * DPR; t.strokeStyle = "rgba(255,255,255,0.55)"; t.stroke();
+    t.beginPath(); t.arc(CX, CY, R, 0, TAU); t.lineWidth = 1.5 * DPR; t.strokeStyle = "rgba(50,32,8,0.4)"; t.stroke();
+  }
+
+  // ---------------- girdi ----------------
+  const KEYMAP = { arrowup: "u", w: "u", arrowdown: "d", s: "d", arrowleft: "l", a: "l", arrowright: "r", d: "r" };
+  window.addEventListener("keydown", (e) => {
+    const tag = (e.target && e.target.tagName) || "";
+    const typing = tag === "INPUT" || tag === "BUTTON" || tag === "SUMMARY";
+    const k = KEYMAP[e.key.toLowerCase()];
+    if (k && !typing) { S.keys.add(k); e.preventDefault(); }
+    if ((e.key === " " || e.key === "Enter") && !typing && S.mode === "game" && !S.playing) { e.preventDefault(); startGame(); }
+  });
+  window.addEventListener("keyup", (e) => { const k = KEYMAP[e.key.toLowerCase()]; if (k) S.keys.delete(k); });
+  window.addEventListener("blur", () => S.keys.clear());
+  let dragging = false;
+  function pointTarget(e) {
+    const r = cv.getBoundingClientRect();
+    const x = ((e.clientX - r.left) * DPR - CX) / SCALE, y = ((e.clientY - r.top) * DPR - CY) / SCALE;
+    const d = Math.hypot(x, y), R = 0.88;
+    S.target = d > R ? { x: x * R / d, y: y * R / d } : { x, y };
+  }
+  cv.addEventListener("pointerdown", (e) => { dragging = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} pointTarget(e); });
+  cv.addEventListener("pointermove", (e) => { if (dragging) pointTarget(e); });
+  cv.addEventListener("pointerup", () => { dragging = false; });
+  cv.addEventListener("pointercancel", () => { dragging = false; });
+
+  // ---------------- sinek hareketi ----------------
+  function lerpAngle(a, b, t) { let d = ((b - a + Math.PI) % TAU + TAU) % TAU - Math.PI; return a + d * t; }
+  function updateFly(dt) {
+    const f = S.fly;
+    let dx = (S.keys.has("r") ? 1 : 0) - (S.keys.has("l") ? 1 : 0);
+    let dy = (S.keys.has("d") ? 1 : 0) - (S.keys.has("u") ? 1 : 0);
+    let arrive = 1;
+    if (dx || dy) S.target = null;
+    else if (S.target) {
+      const h = headPos();  // hedefe kafa gitsin: hortum yiyeceğin üstünde dursun
+      dx = S.target.x - h.x; dy = S.target.y - h.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 0.012) { S.target = null; dx = dy = 0; } else arrive = clamp(dist / 0.1, 0.15, 1);
+    }
+    const len = Math.hypot(dx, dy);
+    const maxSpeed = 0.6 * arrive * (f.ext > 0.2 ? 0.45 : 1);
+    const tvx = len ? dx / len * maxSpeed : 0, tvy = len ? dy / len * maxSpeed : 0;
+    const k = 1 - Math.exp(-dt * (len ? 10 : 16));
+    f.vx += (tvx - f.vx) * k; f.vy += (tvy - f.vy) * k;
+    f.x += f.vx * dt; f.y += f.vy * dt;
+    const r = Math.hypot(f.x, f.y), R = 0.88;
+    if (r > R) { f.x *= R / r; f.y *= R / r; }
+    f.sp = Math.hypot(f.vx, f.vy);
+    if (f.sp > 0.04) f.a = lerpAngle(f.a, Math.atan2(f.vy, f.vx), 1 - Math.exp(-dt * 12));
+    f.walk += f.sp * dt * 55;
+  }
+  function headPos() { const f = S.fly; return { x: f.x + Math.cos(f.a) * 0.045, y: f.y + Math.sin(f.a) * 0.045 }; }
+  function foodRadius(fd) { return FOODS[fd.type].r * (0.45 + 0.55 * fd.amount); }
+  function findContact() {
+    const h = headPos(); let bestFood = null, bd = 1e9;
+    for (const fd of S.foods) {
+      const d = Math.hypot(fd.x - h.x, fd.y - h.y);
+      if (d < foodRadius(fd) + 0.028 && d < bd) { bd = d; bestFood = fd; }
+    }
+    return bestFood;
+  }
+
+  // ---------------- yiyecek ----------------
+  function pickType() {
+    let total = 0; for (const k in FOODS) total += FOODS[k].weight;
+    let x = Math.random() * total;
+    for (const k in FOODS) { x -= FOODS[k].weight; if (x <= 0) return k; }
+    return "seker";
+  }
+  function spawnFood(type) {
+    type = type || pickType();
+    for (let tries = 0; tries < 40; tries++) {
+      const ang = Math.random() * TAU, rr = Math.sqrt(Math.random()) * 0.78;
+      const x = Math.cos(ang) * rr, y = Math.sin(ang) * rr;
+      if (Math.hypot(x - S.fly.x, y - S.fly.y) < 0.24) continue;
+      if (S.foods.some((o) => Math.hypot(o.x - x, o.y - y) < 0.17)) continue;
+      S.foods.push({ type, x, y, amount: 1, eatenBy: 0, born: performance.now() });
+      return true;
+    }
+    return false;
+  }
+  function ensureFood(type) { if (!S.foods.some((f) => f.type === type)) { if (S.foods.length >= 8) S.foods.shift(); spawnFood(type); } }
+
+  // ---------------- beyni çalıştır ----------------
+  let debt = 0;
+  function applyTastes() {
+    if (S.mode === "lab") {
+      brain.setTaste("sugar", +$("sSugar").value); brain.setTaste("bitter", +$("sBitter").value); brain.setTaste("water", +$("sWater").value);
+      return;
+    }
+    const def = S.contact ? FOODS[S.contact.type] : null;
+    brain.setTaste("sugar", def ? def.sugar : 0); brain.setTaste("bitter", def ? def.bitter : 0); brain.setTaste("water", 0);
+  }
+  function runBrain(dt) {
+    debt += dt * 10000;
+    const want = Math.min(Math.floor(debt), 700), t0 = performance.now();
+    let n = 0;
+    while (n < want) {
+      brain.step(); n++;
+      if ((n & 31) === 0 && performance.now() - t0 > 11) break;
+    }
+    debt = Math.min(debt - n, 700);
+    if (dt > 0) S.speed += (Math.min(n / (dt * 10000), 1.2) - S.speed) * 0.04;
+    traceAcc += n;
+    while (traceAcc >= 500) { traceAcc -= 500; trace[traceHead] = brain.mn9Rate; traceHead = (traceHead + 1) % TRACE_N; }
+  }
+
+  // ---------------- oyun mantığı ----------------
+  function updateEating(dt) {
+    const f = S.fly, drive = clamp((brain.mn9Rate - EAT_HZ) / 50, 0, 1);
+    f.ext += (drive - f.ext) * (1 - Math.exp(-dt * 8));
+    if (S.mode !== "game" || !S.playing) return;
+    const c = S.contact;
+    if (!c || drive <= 0) return;
+    const def = FOODS[c.type], d = Math.min(c.amount, drive * 0.34 * dt);
+    c.amount -= d; c.eatenBy += d;
+    S.energy = Math.min(100, S.energy + d * def.energy);
+    S.toxin += d * def.toxin;
+    if (Math.random() < dt * 14) {
+      const h = headPos();
+      S.particles.push({ x: h.x, y: h.y, vx: (Math.random() - 0.5) * 0.25, vy: -0.15 - Math.random() * 0.2, life: 0.7, kind: def.bitter > 0 ? "toxin" : "sweet" });
+    }
+    if (c.amount <= 0.002) {
+      S.foods.splice(S.foods.indexOf(c), 1); S.contact = null; S.eaten++;
+      if (def.sugar > 0 && def.bitter === 0) S.sweetEaten++;
+    }
+  }
+  function loseHeart(reason) {
+    if (S.invuln > 0 || !S.playing) return;
+    S.hearts--; S.invuln = 1.4;
+    if (S.hearts <= 0) gameOver(reason); else toast(reason, S.hearts + " can kaldı.");
+  }
+  function updateHazards(dt) {
+    S.energy -= dt * 3.1;
+    if (S.energy <= 0) { S.energy = 0; gameOver("Sinek açlıktan bayıldı"); return; }
+    S.toxin = Math.max(0, S.toxin - dt * 2.4);
+    if (S.toxin >= 100) { S.toxin = 40; loseHeart("Zehir fazla geldi"); }
+    S.invuln = Math.max(0, S.invuln - dt);
+    if (S.time < 9) return;
+    if (!S.swat) {
+      S.swatTimer -= dt;
+      if (S.swatTimer <= 0) {
+        const f = S.fly;
+        let x = f.x + f.vx * 0.55 + (Math.random() - 0.5) * 0.14, y = f.y + f.vy * 0.55 + (Math.random() - 0.5) * 0.14;
+        const d = Math.hypot(x, y); if (d > 0.84) { x *= 0.84 / d; y *= 0.84 / d; }
+        S.swat = { x, y, t: 0, warn: Math.max(0.85, 1.45 - S.time / 150), hit: false };
+      }
+      return;
+    }
+    const w = S.swat; w.t += dt;
+    if (!w.hit && w.t >= w.warn) {
+      w.hit = true; S.shake = reduceMotion ? 0 : 0.22;
+      if (Math.hypot(S.fly.x - w.x, S.fly.y - w.y) < SWAT_R) loseHeart("Raket isabet etti");
+    }
+    if (w.t >= w.warn + 0.35) { S.swat = null; S.swatTimer = Math.max(2.2, 4.5 + Math.random() * 4 - S.time / 40); }
+  }
+  function updateSpawns(dt) {
+    S.spawnTimer -= dt;
+    if (S.spawnTimer <= 0 && S.foods.length < 7) { spawnFood(); S.spawnTimer = 2.2 + Math.random() * 1.6; }
+  }
+  function updateParticles(dt) {
+    for (const p of S.particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; }
+    S.particles = S.particles.filter((p) => p.life > 0);
+    S.shake = Math.max(0, S.shake - dt);
+  }
+  function complete(id) {
+    if (done[id]) return;
+    done[id] = true; saveJSON("sinekBeyni.missions", done); renderMissions();
+    const m = MISSIONS.find((x) => x.id === id);
+    toast("Görev tamam: " + m.text, m.msg, 7000);
+  }
+  function checkMissions() {
+    const c = S.contact, t = c ? c.type : null;
+    if (S.sweetEaten >= 1) complete("sweet");
+    if (t === "aciOt" && S.contactTime >= 2) complete("reject");
+    if (brain.lesions.roundup && t === "bal" && S.contactTime >= 2.5 && brain.mn9Rate < EAT_HZ) complete("roundup");
+    if (brain.lesions.brake && t === "kinin" && c.eatenBy > 0.15) complete("brake");
+    if (S.time >= 60) complete("survive");
+  }
+
+  // ---------------- akış ----------------
+  function startGame() {
+    Object.assign(S, {
+      playing: true, fly: newFly(), target: null, foods: [], particles: [], energy: 80, toxin: 0, hearts: 3,
+      time: 0, eaten: 0, sweetEaten: 0, spawnTimer: 1.5, swat: null, swatTimer: 10, invuln: 0, contact: null, contactTime: 0,
+    });
+    for (let i = 0; i < 5; i++) spawnFood(i === 0 ? "seker" : undefined);
+    $("overlay").hidden = true;
+    cv.focus && cv.focus();
+  }
+  function gameOver(reason) {
+    S.playing = false; S.swat = null;
+    const sec = Math.floor(S.time);
+    if (sec > best) { best = sec; saveJSON("sinekBeyni.best", best); }
+    $("ovTitle").textContent = reason;
+    $("ovText").textContent = `${fmt(sec)} hayatta kaldı, ${S.eaten} yiyecek yedi. En iyi süre: ${fmt(best)}.`;
+    $("startBtn").textContent = "Yeniden başla";
+    $("overlay").hidden = false;
+  }
+  function fmt(s) { s = Math.floor(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+  function setMode(mode) {
+    S.mode = mode;
+    $("modeGame").setAttribute("aria-pressed", mode === "game");
+    $("modeLab").setAttribute("aria-pressed", mode === "lab");
+    $("labPanel").hidden = mode !== "lab";
+    $("missionPanel").hidden = mode !== "game";
+    $("hud").hidden = mode !== "game";
+    $("foodLegend").hidden = mode !== "game";
+    S.playing = false; S.foods = []; S.swat = null; S.contact = null; S.fly = newFly(); S.target = null;
+    if (mode === "lab") { $("overlay").hidden = true; S.fly.y = 0.05; }
+    else { $("ovTitle").textContent = "Sinek acıktı"; $("startBtn").textContent = "Oyuna başla"; $("overlay").hidden = false; }
+  }
+  $("modeGame").addEventListener("click", () => setMode("game"));
+  $("modeLab").addEventListener("click", () => setMode("lab"));
+  $("startBtn").addEventListener("click", startGame);
+  $("lesRoundup").addEventListener("change", (e) => { brain.setLesion("roundup", e.target.checked); if (e.target.checked && S.playing) ensureFood("bal"); });
+  $("lesBrake").addEventListener("change", (e) => { brain.setLesion("brake", e.target.checked); if (e.target.checked && S.playing) ensureFood("kinin"); });
+  for (const [s, o] of [["sSugar", "oSugar"], ["sBitter", "oBitter"], ["sWater", "oWater"]]) {
+    $(s).addEventListener("input", () => { $(o).textContent = $(s).value + " Hz"; });
+  }
+  let toastTimer = 0;
+  function toast(title, body, ms) {
+    const el = $("toast");
+    el.innerHTML = "";
+    const b = document.createElement("b"); b.textContent = title; el.appendChild(b);
+    if (body) el.appendChild(document.createTextNode(body));
+    el.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms || 3200);
+  }
+  function renderMissions() {
+    const ul = $("missions"); ul.innerHTML = "";
+    for (const m of MISSIONS) {
+      const li = document.createElement("li"); if (done[m.id]) li.className = "done";
+      const box = document.createElement("span"); box.className = "box";
+      const tx = document.createElement("span"); tx.textContent = m.text;
+      li.append(box, tx); ul.appendChild(li);
+    }
+  }
+  renderMissions();
+  (function refTable() {
+    const tb = $("refTable");
+    for (const r of D.reference) {
+      const tr = document.createElement("tr");
+      const a = document.createElement("td"); a.textContent = r.name;
+      const b = document.createElement("td"); b.textContent = "MN9 " + r.mn9_mean.toFixed(1).replace(".", ",") + " Hz";
+      tr.append(a, b); tb.appendChild(tr);
+    }
+  })();
+
+  // ---------------- çizim: kap ----------------
+  function wx(x) { return CX + x * SCALE; }
+  function wy(y) { return CY + y * SCALE; }
+  function rrect(c, x, y, w, h, r) {
+    c.beginPath();
+    if (c.roundRect) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h);
+  }
+  function drawDrop(r, c0, c1) {
+    const g = ctx.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r);
+    g.addColorStop(0, c0); g.addColorStop(1, c1);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.beginPath(); ctx.ellipse(-r * 0.35, -r * 0.4, r * 0.22, r * 0.13, -0.6, 0, TAU); ctx.fill();
+  }
+  function drawFood(fd) {
+    const r = foodRadius(fd) * SCALE;
+    ctx.save(); ctx.translate(wx(fd.x), wy(fd.y));
+    ctx.fillStyle = "rgba(70,42,6,0.2)"; ctx.beginPath(); ctx.ellipse(r * 0.14, r * 0.2, r * 1.02, r * 0.88, 0, 0, TAU); ctx.fill();
+    if (fd.type === "seker") {
+      const cubes = [[-0.38, 0.12, 0.2], [0.34, 0.22, -0.3], [0.0, -0.36, 0.55]];
+      for (const [ox, oy, rot] of cubes) {
+        ctx.save(); ctx.translate(ox * r, oy * r); ctx.rotate(rot);
+        const s = r * 0.62;
+        rrect(ctx, -s / 2, -s / 2, s, s, s * 0.14); ctx.fillStyle = "#FBFAF2"; ctx.fill();
+        ctx.lineWidth = Math.max(1, DPR); ctx.strokeStyle = "rgba(90,70,40,0.25)"; ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fillRect(-s * 0.35, -s * 0.35, s * 0.3, s * 0.1);
+        ctx.restore();
+      }
+    } else if (fd.type === "bal") {
+      drawDrop(r, "#FFD36A", "#C4740A");
+    } else if (fd.type === "aciTatli") {
+      drawDrop(r, "#F6D08A", "#C98B2C");
+      ctx.fillStyle = "#4F6A1C";
+      for (const [ox, oy] of [[0.25, 0.15], [-0.2, 0.3], [0.05, -0.1], [0.35, -0.3]]) { ctx.beginPath(); ctx.arc(ox * r, oy * r, r * 0.09, 0, TAU); ctx.fill(); }
+    } else if (fd.type === "kinin") {
+      drawDrop(r, "#F2F4D6", "#AEB870");
+      ctx.strokeStyle = "rgba(70,95,25,0.75)"; ctx.lineWidth = r * 0.12; ctx.beginPath(); ctx.arc(0, 0, r * 0.45, 0, TAU); ctx.stroke();
+    } else {
+      ctx.rotate((fd.x * 7 + fd.y * 13) % TAU);
+      ctx.beginPath(); ctx.moveTo(0, -r * 1.15);
+      ctx.quadraticCurveTo(r * 0.95, -r * 0.1, 0, r * 1.1); ctx.quadraticCurveTo(-r * 0.95, -r * 0.1, 0, -r * 1.15);
+      ctx.fillStyle = "#4E6B1F"; ctx.fill();
+      ctx.strokeStyle = "#9DB65B"; ctx.lineWidth = Math.max(1, r * 0.07);
+      ctx.beginPath(); ctx.moveTo(0, -r * 0.95); ctx.lineTo(0, r * 0.95); ctx.stroke();
+      for (const s of [-0.4, 0, 0.4]) { ctx.beginPath(); ctx.moveTo(0, s * r); ctx.lineTo(r * 0.38, (s - 0.3) * r); ctx.moveTo(0, s * r); ctx.lineTo(-r * 0.38, (s - 0.3) * r); ctx.stroke(); }
+    }
+    ctx.restore();
+  }
+  function drawFly(now) {
+    const f = S.fly, s = SCALE * 0.052;
+    ctx.save(); ctx.translate(wx(f.x), wy(f.y)); ctx.rotate(f.a + Math.PI / 2);
+    if (S.invuln > 0 && Math.floor(S.invuln * 12) % 2 === 0) ctx.globalAlpha = 0.45;
+    ctx.fillStyle = "rgba(55,32,4,0.22)"; ctx.beginPath(); ctx.ellipse(s * 0.18, s * 0.3, s * 0.62, s * 1.15, 0, 0, TAU); ctx.fill();
+    ctx.strokeStyle = "#2B1D10"; ctx.lineCap = "round"; ctx.lineWidth = s * 0.075;
+    const moving = f.sp > 0.04 && !reduceMotion;
+    for (let i = 0; i < 3; i++) {
+      for (const side of [-1, 1]) {
+        const phase = f.walk + i * 2.1 + (side > 0 ? Math.PI : 0);
+        const swing = moving ? Math.sin(phase) * 0.28 : 0;
+        const by = (i - 1) * s * 0.3, base = [side * s * 0.22, by - s * 0.05];
+        const ang = side * (0.35 + i * 0.45 - 0.45) + swing * side;
+        const knee = [base[0] + side * s * 0.45 * Math.cos(ang), base[1] + s * 0.45 * Math.sin(ang) - s * 0.05];
+        const foot = [knee[0] + side * s * 0.4, knee[1] + (i - 1) * s * 0.35 + s * 0.05];
+        ctx.beginPath(); ctx.moveTo(base[0], base[1]); ctx.lineTo(knee[0], knee[1]); ctx.lineTo(foot[0], foot[1]); ctx.stroke();
+      }
+    }
+    const flutter = f.sp > 0.3 && !reduceMotion ? Math.sin(now / 16) * 0.06 : 0;
+    for (const side of [-1, 1]) {
+      ctx.save(); ctx.translate(side * s * 0.16, s * 0.1); ctx.rotate(side * (0.3 + flutter));
+      ctx.beginPath(); ctx.ellipse(side * s * 0.08, s * 0.62, s * 0.3, s * 0.78, 0, 0, TAU);
+      ctx.fillStyle = "rgba(226,236,244,0.42)"; ctx.fill();
+      ctx.strokeStyle = "rgba(55,65,75,0.45)"; ctx.lineWidth = Math.max(0.8, s * 0.03); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(side * s * 0.12, s * 1.3); ctx.moveTo(0, s * 0.2); ctx.lineTo(side * s * 0.3, s * 1.1); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(0, s * 0.62, s * 0.34, s * 0.58, 0, 0, TAU); ctx.fillStyle = "#C79D57"; ctx.fill(); ctx.clip();
+    ctx.fillStyle = "#3A2815";
+    for (const yy of [0.42, 0.66, 0.9]) ctx.fillRect(-s * 0.4, s * yy, s * 0.8, s * 0.1);
+    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(0, -s * 0.05, s * 0.33, s * 0.38, 0, 0, TAU); ctx.fillStyle = "#8A6536"; ctx.fill();
+    ctx.fillStyle = "rgba(40,25,10,0.5)";
+    for (const [bx, byy] of [[-0.15, -0.2], [0.15, -0.2], [-0.12, 0.1], [0.12, 0.1]]) { ctx.beginPath(); ctx.arc(bx * s, byy * s, s * 0.035, 0, TAU); ctx.fill(); }
+    if (f.ext > 0.02) {
+      ctx.strokeStyle = "#5A391B"; ctx.lineWidth = s * 0.1;
+      ctx.beginPath(); ctx.moveTo(0, -s * 0.72); ctx.lineTo(0, -s * (0.72 + 0.6 * f.ext)); ctx.stroke();
+      ctx.fillStyle = "#6E4724"; ctx.beginPath(); ctx.ellipse(0, -s * (0.74 + 0.6 * f.ext), s * 0.1, s * 0.07, 0, 0, TAU); ctx.fill();
+    }
+    ctx.beginPath(); ctx.ellipse(0, -s * 0.52, s * 0.28, s * 0.2, 0, 0, TAU); ctx.fillStyle = "#B58A4B"; ctx.fill();
+    for (const side of [-1, 1]) {
+      const g = ctx.createRadialGradient(side * s * 0.2, -s * 0.6, s * 0.02, side * s * 0.2, -s * 0.55, s * 0.2);
+      g.addColorStop(0, "#F0444F"); g.addColorStop(1, "#86101B");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(side * s * 0.2, -s * 0.55, s * 0.15, s * 0.19, side * 0.25, 0, TAU); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.beginPath(); ctx.arc(side * s * 0.16, -s * 0.62, s * 0.03, 0, TAU); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawSwatter() {
+    const w = S.swat; if (!w) return;
+    const x = wx(w.x), y = wy(w.y), R = SWAT_R * SCALE;
+    if (!w.hit) {
+      const p = Math.min(1, w.t / w.warn);
+      ctx.fillStyle = "rgba(18,12,6," + (0.07 + 0.33 * p).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, R * (1.55 - 0.55 * p), 0, TAU); ctx.fill();
+      ctx.setLineDash([6 * DPR, 6 * DPR]); ctx.lineWidth = 2 * DPR; ctx.strokeStyle = "rgba(192,24,43," + (0.35 + 0.5 * p).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(x, y, R, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      const a = clamp(1 - (w.t - w.warn) / 0.35, 0, 1);
+      ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(0.35);
+      ctx.fillStyle = "#2466C9"; ctx.fillRect(-R * 0.12, R * 0.95, R * 0.24, R * 1.8);
+      rrect(ctx, -R, -R, 2 * R, 2 * R, R * 0.35); ctx.fillStyle = "rgba(36,102,201,0.35)"; ctx.fill();
+      ctx.lineWidth = 3 * DPR; ctx.strokeStyle = "#2466C9"; ctx.stroke();
+      ctx.lineWidth = 1 * DPR; ctx.beginPath();
+      for (let k = -0.75; k <= 0.76; k += 0.25) { ctx.moveTo(k * R, -R * 0.95); ctx.lineTo(k * R, R * 0.95); ctx.moveTo(-R * 0.95, k * R); ctx.lineTo(R * 0.95, k * R); }
+      ctx.stroke(); ctx.restore();
+    }
+  }
+  function drawPipette() {
+    const h = headPos(), r = 0.05 * SCALE;
+    const sg = +$("sSugar").value, bt = +$("sBitter").value, wt = +$("sWater").value;
+    if (!sg && !bt && !wt) return;
+    ctx.save(); ctx.translate(wx(h.x), wy(h.y - 0.01));
+    const c0 = bt > sg ? "#EEF1CF" : wt > sg ? "#DDF1FA" : "#FFE19A";
+    const c1 = bt > sg ? "#9DAA5E" : wt > sg ? "#7DB9D6" : "#C98410";
+    ctx.globalAlpha = 0.9; drawDrop(r, c0, c1); ctx.restore();
+    ctx.save(); ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 6 * DPR; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(wx(h.x) + 0.02 * SCALE, wy(h.y) - 0.08 * SCALE); ctx.lineTo(wx(h.x) + 0.3 * SCALE, wy(h.y) - 0.5 * SCALE); ctx.stroke();
+    ctx.strokeStyle = "rgba(60,70,80,0.35)"; ctx.lineWidth = 1.5 * DPR; ctx.stroke(); ctx.restore();
+  }
+  function render(now) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+    if (S.shake > 0) ctx.translate((Math.random() - 0.5) * 10 * DPR * S.shake / 0.22, (Math.random() - 0.5) * 10 * DPR * S.shake / 0.22);
+    if (tex) ctx.drawImage(tex, 0, 0);
+    ctx.save(); ctx.beginPath(); ctx.arc(CX, CY, SCALE, 0, TAU); ctx.clip();
+    for (const fd of S.foods) drawFood(fd);
+    if (S.mode === "lab") drawPipette();
+    for (const p of S.particles) {
+      ctx.globalAlpha = clamp(p.life / 0.7, 0, 1);
+      ctx.fillStyle = p.kind === "toxin" ? "#6C8A22" : "#FFF3C4";
+      ctx.beginPath(); ctx.arc(wx(p.x), wy(p.y), (p.kind === "toxin" ? 3.2 : 2.4) * DPR, 0, TAU); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    drawFly(now);
+    drawSwatter();
+    ctx.restore();
+  }
+
+  // ---------------- çizim: beyin ----------------
+  function drawTrace() {
+    const w = tcv.width, h = tcv.height, c = tctx; c.clearRect(0, 0, w, h);
+    const top = 4 * DPR, bot = h - 4 * DPR, maxHz = 120;
+    const yOf = (hz) => bot - (clamp(hz, 0, maxHz) / maxHz) * (bot - top);
+    c.strokeStyle = COL["--line"]; c.lineWidth = 1; c.beginPath(); c.moveTo(0, bot + 0.5); c.lineTo(w, bot + 0.5); c.stroke();
+    c.setLineDash([4 * DPR, 4 * DPR]); c.strokeStyle = COL["--eye"]; c.beginPath(); c.moveTo(0, yOf(EAT_HZ)); c.lineTo(w, yOf(EAT_HZ)); c.stroke(); c.setLineDash([]);
+    c.fillStyle = COL["--muted"]; c.font = 11 * DPR + "px " + FONT; c.textBaseline = "bottom"; c.fillText("45 Hz: yeme eşiği", 4 * DPR, yOf(EAT_HZ) - 2 * DPR);
+    c.beginPath();
+    for (let k = 0; k < TRACE_N; k++) {
+      const v = trace[(traceHead + k) % TRACE_N], x = (k / (TRACE_N - 1)) * w, y = yOf(v);
+      if (k === 0) c.moveTo(x, y); else c.lineTo(x, y);
+    }
+    c.strokeStyle = COL["--ink"]; c.lineWidth = 2 * DPR; c.stroke();
+  }
+  function drawRaster() {
+    const w = rcv.width, h = rcv.height, c = rctx; c.clearRect(0, 0, w, h);
+    const labelW = Math.min(92 * DPR, w * 0.3), plotW = w - labelW, gap = 4 * DPR;
+    const nRows = rowGroup.length, rowH = (h - gap * (GROUPS.length - 1)) / nRows;
+    let y = 0;
+    c.font = 11 * DPR + "px " + FONT; c.textBaseline = "middle";
+    const colors = GROUPS.map((g) => COL[g.color]);
+    GROUPS.forEach((gr, gi) => {
+      gr.y0 = y; gr.y1 = y + (gr.end - gr.start) * rowH; y = gr.y1 + gap;
+      c.fillStyle = COL["--paper-2"]; c.fillRect(labelW, gr.y0, plotW, gr.y1 - gr.y0);
+      const silenced = (gr.key === "roundup" && brain.lesions.roundup) || (gr.key === "brake" && brain.lesions.brake);
+      c.fillStyle = silenced ? COL["--eye"] : COL["--muted"];
+      c.fillText(silenced ? gr.label + " ✕" : gr.label, 0, (gr.y0 + gr.y1) / 2);
+    });
+    const now = brain.t, win = 10000, tw = Math.max(1, 1.3 * DPR);
+    for (let k = 0; k < spCount; k++) {
+      const idx = (spHead - 1 - k + CAP) % CAP, age = now - spStep[idx];
+      if (age > win) break;
+      const row = spRow[idx], gi = rowGroup[row], gr = GROUPS[gi];
+      c.fillStyle = colors[gi];
+      c.fillRect(labelW + plotW * (1 - age / win) - tw, gr.y0 + (row - gr.start) * rowH, tw, Math.max(1, rowH - (rowH > 3 ? 1 : 0)));
+    }
+  }
+  function updateHUD() {
+    const hz = brain.mn9Rate;
+    $("mn9Hz").textContent = Math.round(hz);
+    let state = "Tat yok";
+    const tasting = S.mode === "lab" ? (+$("sSugar").value + +$("sBitter").value + +$("sWater").value) > 0 : !!S.contact;
+    if (tasting) {
+      if (hz >= EAT_HZ) state = "Hortum uzandı, yiyor";
+      else {
+        const sugarOn = S.mode === "lab" ? +$("sSugar").value > 0 : S.contact && FOODS[S.contact.type].sugar > 0;
+        state = sugarOn ? "Tadıyor ama yemiyor" : "Reddediyor";
+      }
+    }
+    $("mn9State").textContent = state;
+    $("mn9State").style.color = hz >= EAT_HZ ? COL["--eye"] : COL["--ink"];
+    $("speed").textContent = "Beyin, gerçek zamanın " + S.speed.toFixed(2).replace(".", ",") + " katı hızında çalışıyor.";
+    if (S.mode === "game") {
+      $("energyFill").style.width = clamp(S.energy, 0, 100) + "%";
+      $("toxinFill").style.width = clamp(S.toxin, 0, 100) + "%";
+      $("hearts").textContent = "●".repeat(Math.max(0, S.hearts)) + "○".repeat(Math.max(0, 3 - S.hearts));
+      $("clock").textContent = fmt(S.time);
+      $("eaten").textContent = S.eaten + " yiyecek";
+    }
+  }
+
+  // ---------------- ana döngü ----------------
+  let prev = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, Math.max(0, (now - prev) / 1000)); prev = now;
+    if (W < 2) resize();
+    const active = S.mode === "lab" || S.playing;
+    if (active) updateFly(dt);
+    if (S.playing) S.time += dt;
+    const c = S.mode === "game" && S.playing ? findContact() : null;
+    if (c !== S.contact) { S.contact = c; S.contactTime = 0; } else if (c) S.contactTime += dt;
+    applyTastes();
+    runBrain(dt);
+    updateEating(dt);
+    if (S.mode === "game" && S.playing) { updateHazards(dt); updateSpawns(dt); if (S.playing) checkMissions(); }
+    updateParticles(dt);
+    render(now); drawTrace(); drawRaster(); updateHUD();
+    requestAnimationFrame(frame);
+  }
+  resize();
+  for (let i = 0; i < 4; i++) spawnFood();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

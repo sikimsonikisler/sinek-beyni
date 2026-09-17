@@ -1,0 +1,6 @@
+node_modules/
+kopru/data/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

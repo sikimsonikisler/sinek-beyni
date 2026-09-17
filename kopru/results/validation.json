@@ -1,0 +1,22 @@
+[
+  {
+    "stim_hz": 200,
+    "n_trials": 10,
+    "pearson_r": 0.9997225625433507,
+    "mn9_brian2": 93.26666666666667,
+    "mn9_kopru": 92.9,
+    "active_brian2": 427,
+    "active_kopru": 416,
+    "seconds": 26.379923582077026
+  },
+  {
+    "stim_hz": 100,
+    "n_trials": 10,
+    "pearson_r": 0.9996933128099614,
+    "mn9_brian2": 67.03333333333333,
+    "mn9_kopru": 66.4,
+    "active_brian2": 383,
+    "active_kopru": 377,
+    "seconds": 24.40812635421753
+  }
+]

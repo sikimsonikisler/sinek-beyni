@@ -1,0 +1,12 @@
+{
+  "name": "sinek-beyni",
+  "private": true,
+  "description": "Meyve sineğinin gerçek beyin devresiyle çalışan tarayıcı oyunu",
+  "scripts": {
+    "build": "python3 game/build.py",
+    "test": "node tests/test_core.js && node tests/smoke.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.3"
+  }
+}
